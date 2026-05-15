@@ -1,0 +1,34 @@
+{
+  "name": "windsurf-project",
+  "version": "1.0.0",
+  "description": "A simple chat agent that answers questions about software end-of-life (EOL) support. The application uses a React frontend and a NestJS backend integrated with the ChatGPT API to provide users with up-to-date information on software EOL dates.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "amplify:build:frontend": "cd client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amiletic84/software-eol-date.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/amiletic84/software-eol-date/issues"
+  },
+  "homepage": "https://github.com/amiletic84/software-eol-date#readme",
+  "devDependencies": {
+    "@aws-amplify/backend": "^1.22.0",
+    "@aws-amplify/backend-cli": "^1.8.2",
+    "aws-cdk-lib": "^2.234.1",
+    "constructs": "^10.6.0",
+    "esbuild": "^0.28.0",
+    "tsx": "^4.22.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "aws-amplify": "^6.17.0"
+  }
+}
