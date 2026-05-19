@@ -15,12 +15,14 @@ jobs:
         with:
           node-version: 24
 
-      - name: Change working directory
-        run: cd client
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd client
+          npm install
       - name: Build frontend
-        run: npm run build
+        run: |
+          cd client
+          npm run build
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -28,4 +30,5 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - run: aws s3 sync ./client/dist s3://s3-software-eol
       - run: aws s3 sync ./client/dist s3://s3-software-eol
