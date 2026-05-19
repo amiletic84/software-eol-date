@@ -1,11 +1,11 @@
-name: Deploy Backend
+name: Build Backend image
 
 on:
   push:
     branches: [master]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +22,5 @@ jobs:
       - run: |
           cd backend
           docker build -t sof-eol .
-          docker tag sof-eol:latest $ECR_URL/sof-eol:latest
-          docker push $ECR_URL/sof-eol:latest
+          docker tag sof-eol:latest ${{ secrets.ECR_URL }}/sof-eol:latest
+          docker push ${{ secrets.ECR_URL }}/sof-eol:latest
