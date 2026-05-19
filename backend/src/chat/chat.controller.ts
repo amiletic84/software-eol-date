@@ -1,6 +1,6 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ChatService } from './chat.service';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { PromptService, SoftwareInformation } from './prompt.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 export class SendMessageDto {
   prompt: string;
@@ -11,6 +11,7 @@ export class ChatController {
   constructor(private readonly promptService: PromptService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async sendMessage(@Body() body: SendMessageDto): Promise<{ reply: SoftwareInformation }> {
     const reply = await this.promptService.sendPrompt(body.prompt);
     return { reply: reply };

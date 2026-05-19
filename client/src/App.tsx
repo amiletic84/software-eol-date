@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
+import { Login } from './components/Login';
 
 interface Message {
   id: number;
@@ -17,7 +18,14 @@ interface SoftwareInformation {
   explanation?: string | null;
 }
 
-const API_URL = 'http://localhost:3001/chat';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
+const logout = async (): Promise<void> => {
+  await fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+};
 
 const softwareInformationRows: { label: string; key: keyof SoftwareInformation }[] = [
   { label: 'Publisher', key: 'publisher' },
@@ -89,11 +97,23 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setIsAuthenticated(false);
+    setMessages([]);
+    setPrompt('');
+  };
 
   const sendMessage = async () => {
     const text = prompt.trim();
@@ -105,9 +125,10 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch(`${API_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ prompt: text }),
       });
       const data = await res.json();
@@ -133,10 +154,17 @@ function App() {
     if (e.key === 'Enter') sendMessage();
   };
 
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
   return (
     <div className="chat-wrapper">
       <header className="chat-header">
         <h1>Agent Chat</h1>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
       </header>
 
       <div className="chat-messages">
