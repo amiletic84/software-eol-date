@@ -21,6 +21,6 @@ jobs:
 
       - run: |
           cd backend
-          docker build -t sof-eol .
-          docker tag sof-eol:latest ${{ secrets.ECR_URL }}/sof-eol:latest
-          docker push ${{ secrets.ECR_URL }}/sof-eol:latest
+          docker build -t playground/apps .
+          docker tag playground/apps:latest ${{ secrets.ECR_URL }}/playground/apps:latest
+          docker push ${{ secrets.ECR_URL }}/playground/apps:latest
