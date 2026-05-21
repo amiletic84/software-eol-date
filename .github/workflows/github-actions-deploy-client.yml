@@ -1,19 +1,28 @@
 name: Deploy Frontend
 
 on:
-  push:
+  workflow_dispatch:
     branches: [master]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    environment: ${{ vars.ENVIRONMENT_PRODUCTION }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      
+      - name: Make envfile
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+          directory: client
+          file_name: .env.github
+          fail_on_empty: false
+          sort_keys: false
 
       - name: Install dependencies
         run: |
@@ -22,7 +31,7 @@ jobs:
       - name: Build frontend
         run: |
           cd client
-          npm run build
+          npm run build:github
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -30,4 +39,4 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - run: aws s3 sync client/build s3://s3-software-eol
+      - run: aws s3 sync client/build ${{ secrets.S3_STORAGE_PATH }}
