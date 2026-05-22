@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { AuthGuard } from './auth/auth.guard';
 
 @Controller()
 export class AppController {
@@ -11,8 +12,16 @@ export class AppController {
   }
 
   @Get("health")
-  getHealth(): void {
+  getHealth(): { status: string } {
     // just return OK
-    return;
+    return { status: 'ok' };
+  }
+
+  
+  @Get("test")
+  @UseGuards(AuthGuard)
+  getTestSec(): string {
+    // just return OK
+    return "Everything is OK";
   }
 }
