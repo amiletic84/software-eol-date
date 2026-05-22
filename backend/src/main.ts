@@ -20,7 +20,9 @@ async function bootstrap() {
 
     // Skip CORS for /health
   app.use((req: any, res: any, next: any) => {
-    if (req.path === '/health') {
+
+    const path = req?.path?.toLowerCase();
+    if (["/", "health"].includes(path)) {
       return next();
     }
 
