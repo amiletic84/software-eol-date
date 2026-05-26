@@ -28,7 +28,7 @@ jobs:
 
       - run: |
           cd backend
-          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} .
-          docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ secrets.ECR_IMAGE }}:latest
-          docker push ${{ secrets.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
-          docker push ${{ secrets.ECR_IMAGE }}:latest
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} .            .
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ env.ECR_IMAGE }}:latest
+          docker push ${{ env.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
+          docker push ${{ env.ECR_IMAGE }}:latest
