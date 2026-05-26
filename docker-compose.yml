@@ -19,6 +19,8 @@ services:
   frontend:
     build:
       context: ./client
+      args: 
+        - REACT_APP_API_URL=http://localhost:3001
       dockerfile: Dockerfile
     container_name: frontend
     ports:
@@ -26,7 +28,7 @@ services:
     depends_on:
       - backend
     environment:
-      - REACT_APP_API_URL=http://backend:3000
+      - REACT_APP_API_URL=http://localhost:3001
     networks:
       - app-network
 

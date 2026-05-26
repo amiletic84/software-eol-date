@@ -1,4 +1,4 @@
-name: Build Backend image
+name: Deploy Backend to ECS
 
 on:
   workflow_dispatch:
