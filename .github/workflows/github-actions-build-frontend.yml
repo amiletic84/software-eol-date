@@ -11,6 +11,7 @@ env:
   REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
 jobs:
   build:
+    environment: ${{ vars.ENVIRONMENT_PRODUCTION }}
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +31,7 @@ jobs:
 
       - run: |
           cd client
-          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} .
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} --build-arg REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} .
           docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ env.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
           docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ env.ECR_IMAGE }}:latest
           docker push ${{ env.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
