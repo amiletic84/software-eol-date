@@ -7,9 +7,6 @@ on:
         description: 'Branch name'
         required: true
         default: 'master'
-      commit_sha:
-        description: 'Commit SHA to checkout and deploy'
-        required: true
 
 env: 
   AWS_REGION: us-east-1
@@ -21,6 +18,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+
+      - name: Save SHA
+        id: vars
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -32,7 +36,7 @@ jobs:
 
       - run: |
           cd backend
-          docker build -t ${{ env.IMAGE_NAME }}:${{ github.event.inputs.commit_sha }} .
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.event.inputs.commit_sha }} ${{ secrets.ECR_IMAGE }}:latest
-          docker push ${{ secrets.ECR_IMAGE }}:${{ github.event.inputs.commit_sha }}
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} .
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ secrets.ECR_IMAGE }}:latest
+          docker push ${{ secrets.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
           docker push ${{ secrets.ECR_IMAGE }}:latest
