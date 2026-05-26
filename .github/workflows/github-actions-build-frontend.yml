@@ -8,13 +8,17 @@ env:
   AWS_REGION: us-east-1
   IMAGE_NAME: soft-eol/frontend
   ECR_IMAGE: ${{ secrets.ECR_URL }}/soft-eol/frontend
-  REACT_APP_API_URL: http://localhost:3001
+  REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Save SHA
+        id: vars
+        run: echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -26,7 +30,9 @@ jobs:
 
       - run: |
           cd client
-          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} --build-arg REACT_APP_API_URL=${{ env.REACT_APP_API_URL }} .
-          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ECR_IMAGE }}:latest
-          docker push ${{ secrets.ECR_IMAGE }}:${{ github.sha }}
-          docker push ${{ secrets.ECR_IMAGE }}:latest
+          docker build -t ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} .
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ env.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
+          docker tag ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.sha }} ${{ env.ECR_IMAGE }}:latest
+          docker push ${{ env.ECR_IMAGE }}:${{ steps.vars.outputs.sha }}
+          docker push ${{ env.ECR_IMAGE }}:latest
+
