@@ -1,0 +1,31 @@
+name: Build Backend image
+
+on:
+  workflow_dispatch:
+    #branches: [master]
+
+env: 
+  AWS_REGION: us-east-1
+  IMAGE_NAME: soft-eol/backend
+  ECR_IMAGE: ${{ secrets.ECR_URL }}/soft-eol/backend
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - run: |
+          cd backend
+          docker build -t ${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ secrets.ECR_IMAGE }}:latest
+          docker push ${{ secrets.ECR_IMAGE }}:${{ github.sha }}
+          docker push ${{ secrets.ECR_IMAGE }}:latest

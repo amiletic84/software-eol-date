@@ -1,6 +1,9 @@
 # Build stage
 FROM node:24-alpine3.22  AS builder
 
+ARG REACT_APP_API_URL=http://localhost:3001
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 WORKDIR /app
 
 # Copy package files
